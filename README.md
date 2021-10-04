@@ -1,6 +1,8 @@
 # Booky-api
 API for application Booky
 
+Older version: https://github.com/Rentfunk/Booky-backend-old
+
 # Developer setup
 
 Install `composer` https://getcomposer.org/download/
