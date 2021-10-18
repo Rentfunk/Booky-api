@@ -8,56 +8,45 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ApiResource(
- *     collectionOperations={"get", "post"},
- *     itemOperations={"get", "put"},
- *     normalizationContext={"groups"={"class_has_book:read"}},
- *     denormalizationContext={"groups"={"class_has_book:write"}},
- *     shortName="ClassroomBookCollection"
- * )
- * @ORM\Entity(repositoryClass=ClassHasBookRepository::class)
- * @ORM\Table(
- *     uniqueConstraints={
- *          @ORM\UniqueConstraint(fields={"classroom", "book"})
- *     }
- * )
- */
-
+#[
+    ApiResource(
+        collectionOperations: ["get", "post"],
+        itemOperations: ["get", "put"],
+        shortName: "ClassroomBookCollection",
+        denormalizationContext: [
+            "groups" => ["class_has_book:write"]
+        ],
+        normalizationContext: [
+            "groups" => ["class_has_book:read"]
+        ]
+    )
+]
+#[ORM\Entity(repositoryClass: ClassHasBookRepository::class)]
+#[ORM\UniqueConstraint(fields: ["classroom", "book"])]
 class ClassHasBook
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private int $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Classroom::class, inversedBy="booksCollection")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"class_has_book:read", "class_has_book:write"})
-     */
-    private $classroom;
+    #[ORM\ManyToOne(targetEntity: Classroom::class, inversedBy: "booksCollection")]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["class_has_book:read", "class_has_book:write"])]
+    private Classroom $classroom;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Book::class, inversedBy="classBookInfo")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"class_has_book:read", "class_has_book:write", "classroom:write"})
-     */
-    private $book;
+    #[ORM\ManyToOne(targetEntity: Book::class, inversedBy: "classBookInfo")]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["class_has_book:read", "class_has_book:write", "classroom:write"])]
+    private Book $book;
 
-    /**
-     * @ORM\Column(type="integer")
-     * @Groups({"class_has_book:read", "class_has_book:write"})
-     */
-    private $booksOwned;
+    #[ORM\Column(type: "integer")]
+    #[Groups(["class_has_book:read", "class_has_book:write"])]
+    private int $booksOwned;
 
-    /**
-     * @ORM\Column(type="integer")
-     * @Groups({"class_has_book:read", "class_has_book:write"})
-     */
-    private $booksReturned;
+    #[ORM\Column(type: "integer")]
+    #[Groups(["class_has_book:read", "class_has_book:write"])]
+    private int $booksReturned;
 
     public function getId(): ?int
     {

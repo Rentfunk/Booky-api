@@ -10,45 +10,40 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ApiResource(
- *     collectionOperations={"get", "post"},
- *     itemOperations={"get", "put"},
- *     normalizationContext={"groups"={"classroom:read"}},
- *     denormalizationContext={"groups"={"classroom:write"}}
- * )
- * @ORM\Entity(repositoryClass=ClassroomRepository::class)
- */
-
+#[
+    ApiResource(
+        collectionOperations: ["get", "post"],
+        itemOperations: ["get", "put"],
+        denormalizationContext: [
+            "groups" => ["classroom:write"]
+        ],
+        normalizationContext: [
+            "groups" => ["classroom:read"]
+        ]
+    )
+]
+#[ORM\Entity(repositoryClass: ClassroomRepository::class)]
 class Classroom
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private int $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Grade::class)
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"classroom:read", "classroom:write"})
-     * @Assert\NotBlank()
-     */
-    private $grade;
+    #[ORM\ManyToOne(targetEntity: Grade::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["classroom:read", "classroom:write"])]
+    #[Assert\NotBlank]
+    private Grade $grade;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     * @Groups({"classroom:read", "classroom:write", "class_has_book:read"})
-     * @Assert\NotBlank()
-     */
-    private $name;
+    #[ORM\Column(type: "string", length: 100)]
+    #[Groups(["classroom:read", "classroom:write", "class_has_book:read"])]
+    #[Assert\NotBlank]
+    private string $name;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ClassHasBook::class, mappedBy="classroom")
-     * @Groups({"classroom:read"})
-     */
-    private $booksCollection;
+    #[ORM\OneToMany(mappedBy: "classroom", targetEntity: ClassHasBook::class)]
+    #[Groups(["classroom:read"])]
+    private Collection $booksCollection;
 
     public function __construct()
     {
@@ -84,9 +79,7 @@ class Classroom
         return $this;
     }
 
-    /**
-     * @return Collection|ClassHasBook[]
-     */
+    /** @return Collection<ClassHasBook> */
     public function getBooksCollection(): Collection
     {
         return $this->booksCollection;

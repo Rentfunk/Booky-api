@@ -7,30 +7,29 @@ use App\Repository\TagRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ApiResource(
- *     collectionOperations={"get", "post"},
- *     itemOperations={"get", "put"},
- *     normalizationContext={"groups"={"tag:read"}},
- *     denormalizationContext={"groups"={"tag:write"}}
- * )
- * @ORM\Entity(repositoryClass=TagRepository::class)
- */
-
+#[
+    ApiResource(
+        collectionOperations: ["get", "post"],
+        itemOperations: ["get", "put"],
+        denormalizationContext: [
+            "groups" => ["tag:write"]
+        ],
+        normalizationContext: [
+            "groups" => ["tag:read"]
+        ]
+    )
+]
+#[ORM\Entity(repositoryClass: TagRepository::class)]
 class Tag
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"tag:read", "tag:write", "order:read"})
-     */
-    private $name;
+    #[ORM\Column(type: "string", length: 255)]
+    #[Groups(["tag:read", "tag:write", "order:read"])]
+    private string $name;
 
     public function getId(): ?int
     {

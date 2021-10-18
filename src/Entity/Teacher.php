@@ -9,36 +9,33 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ApiResource(
- *     collectionOperations={"get", "post"},
- *     itemOperations={"get", "put"},
- *     normalizationContext={"groups"={"teacher:read"}},
- *     denormalizationContext={"groups"={"teacher:write"}}
- * )
- * @ORM\Entity(repositoryClass=TeacherRepository::class)
- */
-
+#[
+    ApiResource(
+        collectionOperations: ["get", "post"],
+        itemOperations: ["get", "put"],
+        denormalizationContext: [
+            "groups" => ["teacher:write"]
+        ],
+        normalizationContext: [
+            "groups" => ["teacher:read"]
+        ]
+    )
+]
+#[ORM\Entity(repositoryClass: TeacherRepository::class)]
 class Teacher
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     * @Groups({"teacher:read", "teacher:write", "teacher_has_book:read"})
-     */
-    private $name;
+    #[ORM\Column(type: "string", length: 100)]
+    #[Groups(["teacher:read", "teacher:write", "teacher_has_book:read"])]
+    private string $name;
 
-    /**
-     * @ORM\OneToMany(targetEntity=TeacherHasBook::class, mappedBy="teacher")
-     * @Groups({"teacher:read"})
-     */
-    private $booksCollection;
+    #[ORM\OneToMany(mappedBy: "teacher", targetEntity: TeacherHasBook::class)]
+    #[Groups(["teacher:read"])]
+    private Collection $booksCollection;
 
     public function __construct()
     {
@@ -62,9 +59,7 @@ class Teacher
         return $this;
     }
 
-    /**
-     * @return Collection|TeacherHasBook[]
-     */
+    /** @return Collection<TeacherHasBook> */
     public function getBooksCollection(): Collection
     {
         return $this->booksCollection;

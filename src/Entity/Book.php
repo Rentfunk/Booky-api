@@ -10,60 +10,49 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ApiResource(
- *     collectionOperations={"get", "post"},
- *     itemOperations={"get", "put"},
- *     normalizationContext={"groups"={"book:read"}},
- *     denormalizationContext={"groups"={"book:write"}}
- * )
- * @ORM\Entity(repositoryClass=BookRepository::class)
- */
-
+#[
+    ApiResource(
+        collectionOperations: ["get", "post"],
+        itemOperations: ["get", "put"],
+        denormalizationContext: [
+            "groups" => ["book:write"]
+        ],
+        normalizationContext: [
+            "groups" => ["book:read"]
+        ]
+    )
+]
+#[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private int $id;
 
-    /**
-     * @ORM\Column(type="string", length=200)
-     * @Groups({"book:read", "book:write", "class_has_book:read", "teacher_has_book:read", "order:read", "order:write"})
-     * @Assert\NotBlank()
-     */
-    private $title;
+    #[ORM\Column(type: "string", length: 200)]
+    #[Groups(["book:read", "book:write", "class_has_book:read", "teacher_has_book:read", "order:read", "order:write"])]
+    #[Assert\NotBlank]
+    private string $title;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"book:read", "book:write", "class_has_book:read", "teacher_has_book:read", "order:read", "order:write"})
-     * @Assert\NotBlank()
-     */
-    private $authors;
+    #[ORM\Column(type: "string", length: 255)]
+    #[Groups(["book:read", "book:write", "class_has_book:read", "teacher_has_book:read", "order:read", "order:write"])]
+    #[Assert\NotBlank]
+    private string $authors;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Grade::class)
-     * @Groups({"book:write", "order:write"})
-     * @Assert\Count(min=1, minMessage="Array should contain minimally 1 element")
-     */
-    private $grades;
+    #[ORM\ManyToMany(targetEntity: Grade::class)]
+    #[Groups(["book:write", "order:write"])]
+    #[Assert\Count(min: 1, minMessage: "Book should have assigned at least 1 grade")]
+    private Collection $grades;
 
-    /**
-     * @ORM\OneToMany(targetEntity=TeacherHasBook::class, mappedBy="book")
-     */
-    private $teacherBookInfo;
+    #[ORM\OneToMany(mappedBy: "book", targetEntity: TeacherHasBook::class)]
+    private Collection $teacherBookInfo;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ClassHasBook::class, mappedBy="book")
-     */
-    private $classBookInfo;
+    #[ORM\OneToMany(mappedBy: "book", targetEntity: ClassHasBook::class)]
+    private Collection $classBookInfo;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Order::class, mappedBy="book")
-     */
-    private $orders;
+    #[ORM\OneToMany(mappedBy: "book", targetEntity: Order::class)]
+    private Collection $orders;
 
     public function __construct()
     {
@@ -102,9 +91,7 @@ class Book
         return $this;
     }
 
-    /**
-     * @return Collection|Grade[]
-     */
+    /** @return Collection<Grade> */
     public function getGrades(): Collection
     {
         return $this->grades;
@@ -126,9 +113,7 @@ class Book
         return $this;
     }
 
-    /**
-     * @Groups({"book:read"})
-     */
+    #[Groups("book:read")]
     public function getGradesText(): string
     {
         $gradesText = "";
@@ -140,9 +125,7 @@ class Book
         return substr($gradesText, 0, -2);
     }
 
-    /**
-     * @return Collection|TeacherHasBook[]
-     */
+    /** @return Collection<TeacherHasBook> */
     public function getTeacherBookInfo(): Collection
     {
         return $this->teacherBookInfo;
@@ -170,9 +153,7 @@ class Book
         return $this;
     }
 
-    /**
-     * @Groups({"book:read"})
-     */
+    #[Groups("book:read")]
     public function getGivenToTeachers(): int
     {
         $books = $this->getTeacherBookInfo();
@@ -186,9 +167,7 @@ class Book
         return $booksCount;
     }
 
-    /**
-     * @Groups({"book:read"})
-     */
+    #[Groups("book:read")]
     public function getReturnedFromTeachers(): int
     {
         $books = $this->getTeacherBookInfo();
@@ -202,9 +181,7 @@ class Book
         return $booksCount;
     }
 
-    /**
-     * @return Collection|ClassHasBook[]
-     */
+    /** @return Collection<ClassHasBook> */
     public function getClassBookInfo(): Collection
     {
         return $this->classBookInfo;
@@ -232,9 +209,7 @@ class Book
         return $this;
     }
 
-    /**
-     * @Groups({"book:read"})
-     */
+    #[Groups("book:read")]
     public function getGivenToStudents(): int
     {
         $booksCount = 0;
@@ -246,9 +221,7 @@ class Book
         return $booksCount;
     }
 
-    /**
-     * @Groups({"book:read"})
-     */
+    #[Groups("book:read")]
     public function getReturnedFromStudents(): int
     {
         $booksCount = 0;
@@ -260,9 +233,7 @@ class Book
         return $booksCount;
     }
 
-    /**
-     * @return Collection|Order[]
-     */
+    /** @return Collection<Order> */
     public function getOrders(): Collection
     {
         return $this->orders;
@@ -290,9 +261,7 @@ class Book
         return $this;
     }
 
-    /**
-     * @Groups({"book:read"})
-     */
+    #[Groups("book:read")]
     public function getAmountInTotal(): int
     {
         $amountInTotal = 0;
@@ -304,9 +273,7 @@ class Book
         return $amountInTotal;
     }
 
-    /**
-     * @Groups({"book:read"})
-     */
+    #[Groups("book:read")]
     public function getAmountInStock(): int
     {
         return $this->getAmountInTotal() - $this->getGivenToStudents() - $this->getGivenToTeachers()

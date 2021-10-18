@@ -9,91 +9,70 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ApiResource(
- *     collectionOperations={"get", "post"},
- *     itemOperations={"get", "put"},
- *     normalizationContext={"groups"={"order:read"}},
- *     denormalizationContext={"groups"={"order:write"}}
- * )
- * @ORM\Entity(repositoryClass=OrderRepository::class)
- * @ORM\Table(name="`order`")
- */
-
+#[
+    ApiResource(
+        collectionOperations: ["get", "post"],
+        itemOperations: ["get", "put"],
+        denormalizationContext: [
+            "groups" => ["order:write"]
+        ],
+        normalizationContext: [
+            "groups" => ["order:read"]
+        ]
+    )
+]
+#[ORM\Entity(repositoryClass: OrderRepository::class)]
+#[ORM\Table(name: "`order`")]
 class Order
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private int $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Book::class, inversedBy="orders", cascade={"persist"})
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"order:read", "order:write"})
-     */
-    private $book;
+    #[ORM\ManyToOne(targetEntity: Book::class, cascade: ["persist"], inversedBy: "orders")]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["order:read", "order:write"])]
+    private Book $book;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"order:read", "order:write"})
-     */
-    private $code;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Groups(["order:read", "order:write"])]
+    private string $code;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"order:read", "order:write"})
-     */
-    private $isbn;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Groups(["order:read", "order:write"])]
+    private string $isbn;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"order:read", "order:write"})
-     */
-    private $registryNumber;
+    #[ORM\Column(type: "string", length: 255)]
+    #[Groups(["order:read", "order:write"])]
+    private string $registryNumber;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"order:read", "order:write"})
-     */
-    private $billingNumber;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Groups(["order:read", "order:write"])]
+    private string $billingNumber;
 
-    /**
-     * @ORM\Column(type="integer")
-     * @Groups({"order:read", "order:write"})
-     */
-    private $bookQuantity = 0;
+    #[ORM\Column(type: "integer")]
+    #[Groups(["order:read", "order:write"])]
+    private int $bookQuantity = 0;
 
-    /**
-     * @ORM\Column(type="float")
-     * @Groups({"order:read", "order:write"})
-     */
-    private $pricePerBook;
+    #[ORM\Column(type: "float")]
+    #[Groups(["order:read", "order:write"])]
+    private float $pricePerBook;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Groups({"order:read"})
-     */
-    private $orderedAt;
+    #[ORM\Column(type: "datetime")]
+    #[Groups(["order:read"])]
+    private \DateTimeInterface $orderedAt;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $discardedQuantity;
+    #[ORM\Column(type: "integer", nullable: true)]
+    private int $discardedQuantity;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"order:read", "order:write"})
-     */
-    private $publicationYear;
+    #[ORM\Column(type: "integer", nullable: true)]
+    #[Groups(["order:read", "order:write"])]
+    private int $publicationYear;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Tag::class)
-     * @Groups({"order:read", "order:write"})
-     */
-    private $tags;
+    #[ORM\ManyToMany(targetEntity: Tag::class)]
+    #[Groups(["order:read", "order:write"])]
+    private Collection $tags;
 
     public function __construct()
     {
@@ -226,9 +205,7 @@ class Order
         return $this;
     }
 
-    /**
-     * @return Collection|Tag[]
-     */
+    /** @return Collection<Tag> */
     public function getTags(): Collection
     {
         return $this->tags;
@@ -250,9 +227,7 @@ class Order
         return $this;
     }
 
-    /**
-     * @Groups({"order:read"})
-     */
+    #[Groups(["order:read"])]
     public function getTotalPrice(): float
     {
         return $this->getPricePerBook() * $this->getBookQuantity();
