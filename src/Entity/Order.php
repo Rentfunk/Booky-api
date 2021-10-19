@@ -70,7 +70,8 @@ class Order
     #[Groups(["order:read", "order:write"])]
     private int $publicationYear;
 
-    #[ORM\ManyToMany(targetEntity: Tag::class)]
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: "orders", cascade: ["persist"])]
+    #[ORM\JoinTable(name: "order_tag")]
     #[Groups(["order:read", "order:write"])]
     private Collection $tags;
 

@@ -20,6 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     )
 ]
 #[ORM\Entity(repositoryClass: GradeRepository::class)]
+
 class Grade
 {
     #[ORM\Id]
@@ -27,7 +28,7 @@ class Grade
     #[ORM\Column(type: "integer")]
     private int $id;
 
-    #[ORM\Column(type: "string", length: 100)]
+    #[ORM\Column(type: "string", length: 100, unique: true)]
     #[Groups(["grade:read", "grade:write"])]
     private string $name;
 

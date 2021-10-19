@@ -48,6 +48,10 @@ class ClassHasBook
     #[Groups(["class_has_book:read", "class_has_book:write"])]
     private int $booksReturned;
 
+    #[ORM\ManyToOne(targetEntity: SchoolYear::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private SchoolYear $schoolYear;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -97,6 +101,18 @@ class ClassHasBook
     public function setBooksReturned(int $booksReturned): self
     {
         $this->booksReturned = $booksReturned;
+
+        return $this;
+    }
+
+    public function getSchoolYear(): ?SchoolYear
+    {
+        return $this->schoolYear;
+    }
+
+    public function setSchoolYear(?SchoolYear $schoolYear): self
+    {
+        $this->schoolYear = $schoolYear;
 
         return $this;
     }

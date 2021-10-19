@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\TagRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -31,6 +32,9 @@ class Tag
     #[Groups(["tag:read", "tag:write", "order:read"])]
     private string $name;
 
+    #[ORM\ManyToMany(targetEntity: Order::class, mappedBy: "tags", cascade: ["persist"])]
+    private Collection $orders;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -47,4 +51,27 @@ class Tag
 
         return $this;
     }
+
+    /** @return Collection<Order> */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): self
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders[] = $order;
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): self
+    {
+        $this->orders->removeElement($order);
+
+        return $this;
+    }
+
 }

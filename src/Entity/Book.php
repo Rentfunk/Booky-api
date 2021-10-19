@@ -161,7 +161,9 @@ class Book
 
         foreach ($books as $book)
         {
-            $booksCount += $book->getBooksOwned();
+            if ($book->getSchoolYear()->getIsCurrent()) {
+                $booksCount += $book->getBooksOwned();
+            }
         }
 
         return $booksCount;
@@ -175,7 +177,9 @@ class Book
 
         foreach ($books as $book)
         {
-            $booksCount += $book->getBooksReturned();
+            if ($book->getSchoolYear()->getIsCurrent()) {
+                $booksCount += $book->getBooksReturned();
+            }
         }
 
         return $booksCount;
@@ -215,7 +219,9 @@ class Book
         $booksCount = 0;
         foreach ($this->getClassBookInfo() as $book)
         {
-            $booksCount += $book->getBooksOwned();
+            if ($book->getSchoolYear()->getIsCurrent()) {
+                $booksCount += $book->getBooksOwned();
+            }
         }
 
         return $booksCount;
@@ -227,7 +233,9 @@ class Book
         $booksCount = 0;
         foreach ($this->getClassBookInfo() as $book)
         {
-            $booksCount += $book->getBooksReturned();
+            if ($book->getSchoolYear()->getIsCurrent()) {
+                $booksCount += $book->getBooksReturned();
+            }
         }
 
         return $booksCount;
